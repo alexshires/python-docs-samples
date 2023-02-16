@@ -1,4 +1,4 @@
-# Copyright 2021 Google LLC
+# Copyright 2023 Google LLC
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ from typing import List, Tuple
 from google.cloud import storage
 
 
-def _create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_name: str) -> Tuple[str, List[Path]]:
+def create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_name: str) -> Tuple[str, List[Path]]:
     """
     get the list of files within the DAG dir that have changed in the latest git commits against the specified branch
     :param dag_dir:
@@ -48,7 +48,7 @@ def _create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_na
     return dag_dir, changed_file_list
 
 
-def upload_changed_dags_to_composer(dag_list: List[Path], dag_bucket: str) -> None:
+def upload_changed_dags_to_composer(dag_list: List[Path], bucket_name: str) -> None:
     """
     list of DAGs to upload to Commposer
     :param dag_list:
@@ -56,10 +56,10 @@ def upload_changed_dags_to_composer(dag_list: List[Path], dag_bucket: str) -> No
     """
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
-
-
-
-
+    for dag_path in dag_list:
+        blob = bucket.blob(dag_path.name)
+        blob.upload_from_filename(str(dag_path))
+        print(f"File {dag_path.name} uploaded to {bucket_name}/{dag_path.name}.")
 
 
 if __name__ == "__main__":
@@ -87,7 +87,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    dag_list = _create_dags_list_from_git_diff(args.dags_directory, args.repo_root, args.repo_main)
+    dag_list = create_dags_list_from_git_diff(args.dags_directory, args.repo_root, args.repo_main)
 
-    upload_changed_dags_to_composer(dag_list, args.dags_bucket)
+    if len(dag_list)==0:
+        print("No DAGs to upload")
+    else:
+        upload_changed_dags_to_composer(dag_list=dag_list, bucket_name=args.dags_bucket)
 # [END composer_cicd_deploy_dags_from_diff_utility]
