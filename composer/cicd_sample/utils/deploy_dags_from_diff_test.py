@@ -28,6 +28,7 @@ import deploy_dags_from_diff # noqa: I100 - lint is incorrectly saying this is o
 DAGS_DIR = pathlib.Path(__file__).parent.parent / "dags/"
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 REPO_MAIN = "main"
+TEST_DAG_FILENAME = "example2_dag.py"
 
 
 def test_create_dags_list_with_changes() -> None:
@@ -35,16 +36,23 @@ def test_create_dags_list_with_changes() -> None:
     this test checks for
     :return:
     """
+    full_dag_dir_str = str(DAGS_DIR.resolve())
+    full_repo_root_str = str(REPO_ROOT.resolve())
     repo = git.Repo(REPO_ROOT)
+    repo.create_head("test-branch")
+    repo.git.checkout("test-branch")
+    with open(f"{DAGS_DIR.resolve()}/{TEST_DAG_FILENAME}", 'a') as f:
+        # create minor change
+        f.write("# appended line")
 
-    with open(DAGS_DIR+"/example2_dag.py", 'w') as f:
-        # create minor
-
-    dag_list = deploy_dags_from_diff.create_dags_list_from_git_diff(DAGS_DIR, REPO_ROOT, REPO_MAIN)
+    repo.git.commit("-am", "appended line to file")
+    dag_list = deploy_dags_from_diff.create_dags_list_from_git_diff(
+        full_dag_dir_str, full_repo_root_str, REPO_MAIN)
+    print(dag_list)
     assert len(dag_list) > 0
-    assert
-
-
+    assert "example2_dag.py" in dag_list[0]
+    # cleanup
+    repo.git.checkout(REPO_MAIN)
 
 
 def test_create_dags_list_no_changes() -> None:

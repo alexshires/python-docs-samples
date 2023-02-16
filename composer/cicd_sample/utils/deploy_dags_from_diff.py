@@ -27,7 +27,7 @@ from typing import List, Tuple
 from google.cloud import storage
 
 
-def create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_name: str) -> Tuple[str, List[Path]]:
+def create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_name: str) -> List[Path]:
     """
     get the list of files within the DAG dir that have changed in the latest git commits against the specified branch
     :param dag_dir:
@@ -37,15 +37,17 @@ def create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_nam
     """
     repo = git.Repo(repo_root)
     diff_results = repo.git.diff(main_branch_name)
+    print(diff_results)
     p = Path(repo_root)
     changed_file_list = list()
     for diff_result_line in diff_results.split("\n"):
         # test if changed
         if "+++ b" in diff_result_line and dag_dir in diff_result_line:
             changed_path = p / Path(diff_result_line[6:])
+            print(changed_path)
             changed_file_list.append(changed_path)
             # print(changed_path.resolve())
-    return dag_dir, changed_file_list
+    return changed_file_list
 
 
 def upload_changed_dags_to_composer(dag_list: List[Path], bucket_name: str) -> None:
