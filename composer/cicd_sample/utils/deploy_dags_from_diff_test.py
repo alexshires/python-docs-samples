@@ -52,7 +52,7 @@ def test_create_dags_list_with_changes() -> None:
         full_dag_dir_str, full_repo_root_str, REPO_MAIN)
     print(dag_list)
     assert len(dag_list) > 0
-    assert "example2_dag.py" in dag_list[0]
+    assert "example2_dag.py" in dag_list[0].name
     # cleanup - uncomment once test dev is done
     # repo.git.checkout(REPO_MAIN)
 
