@@ -40,7 +40,7 @@ def _create_dags_list(dags_directory: str) -> Tuple[str, List[str]]:
 
 
 def upload_dags_to_composer(
-    dags_directory: str, bucket_name: str, name_replacement: str = "dags/"
+        dags_directory: str, bucket_name: str, name_replacement: str = "dags/"
 ) -> None:
     """
     Given a directory, this function moves all DAG files from that directory
