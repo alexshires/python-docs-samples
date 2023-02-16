@@ -62,6 +62,9 @@ def test_create_dags_list_no_changes() -> None:
     this test checks for an empty list based on no changes in git
     :return:
     """
-    dag_list = deploy_dags_from_diff.create_dags_list_from_git_diff(DAGS_DIR, REPO_ROOT, REPO_MAIN)
+    full_dag_dir_str = "cicd_sample/dags" # str(DAGS_DIR) # .resolve())
+    full_repo_root_str = str(REPO_ROOT.resolve())
+    dag_list = deploy_dags_from_diff.create_dags_list_from_git_diff(
+        full_dag_dir_str, full_repo_root_str, REPO_MAIN)
     assert len(dag_list) == 0
 
