@@ -36,7 +36,7 @@ def test_create_dags_list_with_changes() -> None:
     this test checks for
     :return:
     """
-    full_dag_dir_str = str(DAGS_DIR.resolve())
+    full_dag_dir_str = str(DAGS_DIR) # .resolve())
     full_repo_root_str = str(REPO_ROOT.resolve())
     print(full_dag_dir_str, full_repo_root_str)
     repo = git.Repo(REPO_ROOT)
