@@ -25,6 +25,7 @@ import pytest
 
 import deploy_dags_from_diff # noqa: I100 - lint is incorrectly saying this is out of order
 
+# DAGS_DIR = "cicd_sample/dags"  # this needs to be relative to the REPO roo
 DAGS_DIR = pathlib.Path(__file__).parent.parent / "dags/"
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 REPO_MAIN = "main"
