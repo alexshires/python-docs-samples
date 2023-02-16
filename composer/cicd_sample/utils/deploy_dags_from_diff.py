@@ -37,7 +37,7 @@ def create_dags_list_from_git_diff(dag_dir: str, repo_root: str, main_branch_nam
     """
     repo = git.Repo(repo_root)
     diff_results = repo.git.diff(main_branch_name)
-    print(diff_results)
+    # print(diff_results)
     p = Path(repo_root)
     changed_file_list = list()
     for diff_result_line in diff_results.split("\n"):
